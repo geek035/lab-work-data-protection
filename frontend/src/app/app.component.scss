@@ -1,0 +1,34 @@
+$header-height: 30px;
+$footer-height: 30px;
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: sticky;
+    width: 100vw;
+    height: $header-height;
+
+    border-bottom: black solid 1px;
+    box-shadow: 1px 0 10px black;
+}
+
+.main-box {
+    width: 100vw;
+    height: calc(100vh 
+        - $header-height - $footer-height);
+}
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: $footer-height;
+    width: 100vw;
+    
+    border-top: 1px solid black;
+    background-color: rgb(233, 233, 233);
+        
+}
