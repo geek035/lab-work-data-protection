@@ -1,16 +1,26 @@
 using Backend.interfaces;
 using Backend.repositories;
 using Backend.services;
+using Backend.models;
+using FluentValidation.AspNetCore;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services
+    .AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddScoped<IUserRepository, MockUserRepository>(provider => new MockUserRepository());
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IValidator<UserDTO>, UserDTOValidator>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -1,4 +1,4 @@
-using Backend.DTO;
+using Backend.models;
 using Backend.interfaces;
 using Microsoft.AspNetCore.Mvc;
 

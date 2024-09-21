@@ -1,6 +1,4 @@
-using Backend.interfaces;
-
-namespace Backend.DTO;
+namespace Backend.models;
 
 public class UserDTO {
     public required string username { get; set; }
