@@ -29,6 +29,6 @@ import { Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ButtonComponent {
-  @Input({required: true}) onClickHandler: () => void = () => {};
+  @Input() onClickHandler: () => void = () => {};
   @Input() buttonType: string = "button";
 }

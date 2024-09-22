@@ -1,26 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserDataRequestService } from '../../../../core/services/server-services/user-data-request.service';
-import { DATA_REQUEST_STRATEGY, IUserDataRequestService } from '../../../../interfaces/user-data-request.interface';
 import { Subscription } from 'rxjs';
-import { SpinnerOverlayComponent } from '../../../../shared/components/loader-overlay/spinner-overlay.component';
+import { LoaderOverlayComponent } from '../../../../shared/components/loader-overlay/loader-overlay.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
+import { AUTHENTICATION_STRATEGY, IAuthenticationService } from '../../../../interfaces/authentication.interface';
+import { AuthenticationService } from '../../../../core/services/authentication-service/authentication.service';
+import { LoginResponse } from '../../../../models/login-response';
 
 @Component({
   selector: 'app-log-in',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerOverlayComponent, ButtonComponent],
+  imports: [ReactiveFormsModule, CommonModule, LoaderOverlayComponent, ButtonComponent],
   templateUrl: './log-in.component.html',
   styleUrl: './log-in.component.scss',
-  providers: [
-    {
-      provide: DATA_REQUEST_STRATEGY,
-      useClass: UserDataRequestService,
-    }
-  ]
+  providers: []
 })
 export class LogINComponent {
   logForm!: FormGroup;
@@ -30,9 +26,10 @@ export class LogINComponent {
   #wrongPasswordsCounter = 0;
 
   constructor(
-    @Inject(DATA_REQUEST_STRATEGY) private readonly userDataRequestService: IUserDataRequestService,
+    @Inject(AUTHENTICATION_STRATEGY) private readonly authenticationService: IAuthenticationService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly router: Router) {  }
+    private readonly router: Router
+  ) {  }
 
   ngOnInit() {
     this.logForm = new FormGroup({
@@ -51,13 +48,15 @@ export class LogINComponent {
 
     this.showSpinner = true;
 
-    this.#subcription = this.userDataRequestService
-      .getUserData(username, password)
+    this.#subcription = this.authenticationService
+      .authenticate(username, password)
       .subscribe({
         next: (responce) => {
           this.showSpinner = false;
           this.#wrongPasswordsCounter = 0;
           this.changeDetectorRef.markForCheck();
+          console.log(responce);
+          this.router.navigate(["user", (responce as LoginResponse).user.username]);
         },
         error: (error: HttpErrorResponse) => { 
           this.showSpinner = false;

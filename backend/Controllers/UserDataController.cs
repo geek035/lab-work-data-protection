@@ -13,15 +13,18 @@ public class UsersController: ControllerBase
     private readonly IUserService _userService;
     private readonly IValidator<LoginRequest> _loginRequestValidator;
     private readonly IUserAuthenticationService _authenticationService;
+    private readonly IGenerationTokenService _generationTokenService;
 
     public UsersController(
         IUserService userService, 
         IValidator<LoginRequest> loginRequestValidator,
-        IUserAuthenticationService userAuthenticationService)
+        IUserAuthenticationService userAuthenticationService,
+        IGenerationTokenService generationTokenService)
     {
         _userService = userService;
         _loginRequestValidator = loginRequestValidator;
         _authenticationService = userAuthenticationService;
+        _generationTokenService = generationTokenService;
     }
 
     // GET: api/users
@@ -33,7 +36,7 @@ public class UsersController: ControllerBase
     }
 
     [HttpPost("login")]
-    public ActionResult<UserDTO> Login([FromBody] LoginRequest loginRequest )
+    public ActionResult<LoginResponse> Login([FromBody] LoginRequest loginRequest )
     {
         var validationResult = _loginRequestValidator.Validate(loginRequest);
         
@@ -41,19 +44,29 @@ public class UsersController: ControllerBase
         {
             return BadRequest(validationResult.Errors);
         }
+        
+        var result = _authenticationService.Authenticate(loginRequest.Username, loginRequest.Password);
 
-        var status = _authenticationService.Authenticate(loginRequest.Username, loginRequest.Password);
-
-        if (status == 404)
+        if (result.IsSuccessful)
         {
-            return NotFound("User not found");
+            var user = _userService.GetUserByUsername(loginRequest.Username);
+
+            if (user == null) { return NotFound("User not found"); }
+
+            var token = _generationTokenService.GenerateJwtToken(user);
+
+            return Ok(new LoginResponse
+            {
+                User = user,
+                Token = token
+            });
         }
 
-        if (status == 401)
+        return result.ErrorMessage switch
         {
-            return Unauthorized("Invalid credentials");
-        }
-
-        return Ok();
+            "User not found" => NotFound(result.ErrorMessage),
+            "Invalid password" => Unauthorized(result.ErrorMessage),
+            _ => BadRequest("An error occurred"),
+        };
     }
 }

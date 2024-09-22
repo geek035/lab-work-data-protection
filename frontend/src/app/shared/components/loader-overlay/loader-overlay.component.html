@@ -1,11 +1,11 @@
 <div class="wrapper">
-    <div class="overlay" *ngIf="showSpinner">
+    <div class="overlay" *ngIf="showLoader">
       <div class="spinner-wrapper">
         <app-loader></app-loader>
       </div>
     </div>
   
-    <div class="loaded-content" [class.blurred]="showSpinner">
+    <div class="loaded-content" [class.blurred]="showLoader">
       <ng-content></ng-content>
     </div>
 </div>

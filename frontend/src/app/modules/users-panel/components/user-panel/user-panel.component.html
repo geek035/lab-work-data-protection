@@ -1,1 +1,6 @@
-<p>user-panel works!</p>
+<app-loader-overlay [showLoader]="showLoader">
+    <section class="user-panel">
+        <h2 class="user-panel__header">{{username}}</h2>
+        <app-admin-panel *ngIf="username === 'admin'"></app-admin-panel>
+    </section>
+</app-loader-overlay>

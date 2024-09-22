@@ -3,15 +3,15 @@ import { LoaderComponent } from '../loader/loader.component';
 import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-spinner-overlay',
+  selector: 'app-loader-overlay',
   standalone: true,
   imports: [LoaderComponent, NgIf],
-  templateUrl: './spinner-overlay.component.html',
-  styleUrl: './spinner-overlay.component.scss',
+  templateUrl: './loader-overlay.component.html',
+  styleUrl: './loader-overlay.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SpinnerOverlayComponent {
-  @Input() showSpinner: boolean = false;
+export class LoaderOverlayComponent {
+  @Input() showLoader: boolean = false;
 
   constructor() { }
 

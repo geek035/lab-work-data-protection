@@ -2,5 +2,10 @@
 
 ###
 
-GET {{Backend_HostAddress}}/api/users/admin
-Accept: application/json
+POST {{Backend_HostAddress}}/api/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "g"
+}

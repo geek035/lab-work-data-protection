@@ -1,5 +1,5 @@
 
-<app-spinner-overlay [showSpinner]="showSpinner">
+<app-loader-overlay [showLoader]="showSpinner">
     <form class="form" [formGroup]="logForm"
         (submit)="onSubmit()">
 
@@ -33,8 +33,7 @@
         </div>
         
         <div class="form__buttons-group">
-            <app-button [onClickHandler]="onSubmit.bind(this)" 
-                [buttonType]="'submit'" 
+            <app-button [buttonType]="'submit'" 
                 class="form__button">
                 
                 Ок
@@ -42,4 +41,4 @@
             <app-button [onClickHandler]="onClick.bind(this)">Отмена</app-button>
         </div>
     </form>
-</app-spinner-overlay>
+</app-loader-overlay>

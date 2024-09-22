@@ -7,26 +7,26 @@ public class UserAuthenticationService : IUserAuthenticationService
 {
     private readonly IUserRepository _userRepository;
 
-    public UserAuthenticationService(IUserRepository userRepository)
+    public UserAuthenticationService(
+        IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
-    public int Authenticate(string username, string password)
+    public AuthenticationResult Authenticate(string username, string password)
     {
         var user = _userRepository.LoadSpecificUser(Encoding.UTF8.GetBytes(username));
 
         if (user == null)
         {
-            return 404;
+            return new AuthenticationResult { IsSuccessful = false, ErrorMessage = "User not found" };
         }
 
-        if (user == null || !user.Password.SequenceEqual(Encoding.UTF8.GetBytes(password)))
+        if (!user.Password.SequenceEqual(Encoding.UTF8.GetBytes(password)))
         {
-            return 401;
+            return new AuthenticationResult { IsSuccessful = false, ErrorMessage = "Invalid password" };
         }
 
-        return 200;
-
+        return new AuthenticationResult { IsSuccessful = true };
     }
 }

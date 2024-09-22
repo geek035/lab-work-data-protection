@@ -6,5 +6,5 @@ public interface IUserService {
     void RegisterUser(UserDTO user);
     List<UserDTO> GetAllUsers();
     UserDTO? GetUserByUsername(string username);
-    void UpdateUser(UserDTO updatedUser);
+    void UpdateUser(UserDTO updatedUser, string? password);
 }

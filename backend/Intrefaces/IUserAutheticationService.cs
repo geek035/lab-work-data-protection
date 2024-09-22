@@ -1,7 +1,8 @@
-namespace Backend.interfaces;
 using Backend.models;
+
+namespace Backend.interfaces;
 
 public interface IUserAuthenticationService
 {
-    int Authenticate(string username, string password);
+    AuthenticationResult Authenticate(string username, string password);
 }
