@@ -1,7 +1,10 @@
-<div class="log-in-box">
+
+<app-spinner-overlay [showSpinner]="showSpinner">
     <form class="form" [formGroup]="logForm"
         (submit)="onSubmit()">
+
         <label class="form__header">Вход в программу</label>
+
         <div class="form__wrapper">
             <div class="form__group">
                 <label class="form__label">Имя пользователя: </label>
@@ -15,25 +18,23 @@
             </div>
         </div>
 
-        <div class="form__error-box" 
-            *ngIf="logForm.invalid && !logForm.controls['username'].pristine
-                && !logForm.controls['password'].pristine">
-            <div class="form__error-message"
-                *ngIf="logForm.controls['username'].invalid">
-            
-                Имя пользователя введенно некорректно
-            </div>
+        <div class="form__error-box">
 
             <div class="form__error-message"
-                *ngIf="logForm.controls['password'].invalid">
-            
+                *ngIf="logForm.controls['username'].errors?.['unknownUser']">
+
+                Неизвестное имя пользователя
+            </div>
+            <div class="form__error-message"
+                *ngIf="logForm.controls['password'].errors?.['wrongPassword']">
+
                 Пароль введен неверно
             </div>
         </div>
-
+        
         <div class="form__buttons-group">
             <button type="submit" class="form__button">Ок</button>
             <button class="form__button">Отмена</button>
         </div>
     </form>
-</div>
+</app-spinner-overlay>

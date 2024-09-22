@@ -2,12 +2,11 @@ using Backend.interfaces;
 using Backend.repositories;
 using Backend.services;
 using Backend.models;
+
 using FluentValidation.AspNetCore;
 using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 
@@ -15,23 +14,37 @@ builder.Services
     .AddFluentValidationAutoValidation()
     .AddFluentValidationClientsideAdapters();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services
+    .AddScoped<IUserRepository, FileUserRepository>(
+        provider => new FileUserRepository("../general-data/users.txt")
+);
 
-builder.Services.AddScoped<IUserRepository, MockUserRepository>(provider => new MockUserRepository());
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidator<UserDTO>, UserDTOValidator>();
+builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
+
 
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAngularOrigin", builder => 
+        {
+            builder
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) {  }
+var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseCors("AllowAngularOrigin");
 
 app.UseAuthorization();
 

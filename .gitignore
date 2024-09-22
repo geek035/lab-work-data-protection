@@ -45,7 +45,7 @@ frontend/Thumbs.db
 # -------------------- GENERAL --------------------
 
 *.sln
-
+general-data/users.txt
 
 # -------------------- BACKEND --------------------
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
@@ -53,11 +53,11 @@ backend/[Bb]in/
 backend[Oo]bj/
 
 # Logs
-backendLogs/
+backend/backendLogs/
 
 # Generated files
-backendproject.lock.json
-backend.vs/
+backend/backendproject.lock.json
+backend/backend.vs/
 
 # mstest test results
 backend/TestResults

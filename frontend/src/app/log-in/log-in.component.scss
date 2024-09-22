@@ -1,13 +1,4 @@
 :host {
-    width: 100%;
-    height: 100%;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.log-in-box {
     width: 400px;
     height: 500px;
 
@@ -17,14 +8,9 @@
 
     padding: .5rem 0 .5rem 0;
 
-
-    &__header {
-        width: 100%;
-        text-align: center;
-        text-transform: uppercase;
-
-        margin-bottom: 1rem;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @import url('../form-style/form.style.scss');

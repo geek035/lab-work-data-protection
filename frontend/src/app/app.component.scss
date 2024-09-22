@@ -18,6 +18,10 @@ $footer-height: 30px;
     width: 100vw;
     height: calc(100vh 
         - $header-height - $footer-height);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .footer {

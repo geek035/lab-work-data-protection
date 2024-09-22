@@ -1,28 +1,32 @@
 import { Injectable } from '@angular/core';
 import { ConfigService } from '../config-service/config.service';
 import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap } from 'rxjs';
+import { exhaustMap, Observable, switchMap, throwError } from 'rxjs';
 import { IUserDataAPI } from './user.data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserDataRequestService {
-  #serverURL: string | undefined;
 
   constructor(
     private readonly serverConfig: ConfigService,
     private readonly http: HttpClient) { }
 
   getUserData(username: string, password: string): Observable<IUserDataAPI> {
-    return this.serverConfig.getServerUrl()
-      .pipe(
-        switchMap(config => {
-          this.#serverURL = config.serverURL;
+    const serverURL = this.serverConfig.getServerUrl();
+    const payload = {
+      username: username,
+      password: password == null ? "" : password,
+    }
+    
+    return this.http.post<IUserDataAPI>(`${serverURL}/api/users/login`, payload)
+      .pipe(exhaustMap(response => {
+          return new Observable<IUserDataAPI>(observer => {
+            observer.next(response as IUserDataAPI);
+            observer.complete();
+          })
+        }));
 
-          return this.http
-            .get(`${this.#serverURL}/users/${username}`) as Observable<IUserDataAPI>;
-      })
-    );
   }
 }

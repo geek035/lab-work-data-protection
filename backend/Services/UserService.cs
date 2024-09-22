@@ -31,8 +31,8 @@ public class UserService: IUserService
         _userRepository.UpdateUser(convertToAPIUserData(updatedUser));
     }
 
-    public UserDTO? GetUserByUsername(byte[] username) {
-        var user =  _userRepository.LoadSpecificUser(username);
+    public UserDTO? GetUserByUsername(string username) {
+        var user =  _userRepository.LoadSpecificUser(Encoding.UTF8.GetBytes(username));
         if (user == null) { return null; }
         return convertFromAPIUserData(user);
     }

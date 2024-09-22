@@ -2,5 +2,5 @@
 
 ###
 
-GET {{Backend_HostAddress}}/api/users
+GET {{Backend_HostAddress}}/api/users/admin
 Accept: application/json
