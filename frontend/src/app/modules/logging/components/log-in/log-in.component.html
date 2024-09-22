@@ -33,8 +33,13 @@
         </div>
         
         <div class="form__buttons-group">
-            <button type="submit" class="form__button">Ок</button>
-            <button class="form__button">Отмена</button>
+            <app-button [onClickHandler]="onSubmit.bind(this)" 
+                [buttonType]="'submit'" 
+                class="form__button">
+                
+                Ок
+            </app-button>
+            <app-button [onClickHandler]="onClick.bind(this)">Отмена</app-button>
         </div>
     </form>
 </app-spinner-overlay>

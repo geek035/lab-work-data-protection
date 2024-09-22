@@ -63,8 +63,20 @@
 
     &__button {
         width: 100px;
+        height: 35px;
+        
         text-transform: uppercase;
+
         border-radius: 5px;
+
+        cursor: pointer;
+
+        transition: background-color .3s ease-out;
+    }
+
+    &__button:hover {
+        background-color: black;
+        color: white;
     }
 
     &__header {
@@ -104,3 +116,7 @@
 
     }
 }
+
+.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+}  

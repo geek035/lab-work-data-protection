@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { LoaderComponent } from '../app-loader/loader.component';
+import { LoaderComponent } from '../loader/loader.component';
 import { NgIf } from '@angular/common';
 
 @Component({

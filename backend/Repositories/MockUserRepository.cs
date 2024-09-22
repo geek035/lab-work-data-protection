@@ -1,7 +1,6 @@
 namespace Backend.repositories;
 using Backend.interfaces;
 using Backend.models;
-using System.IO;
 using System.Text;
 
 public class MockUserRepository : IUserRepository

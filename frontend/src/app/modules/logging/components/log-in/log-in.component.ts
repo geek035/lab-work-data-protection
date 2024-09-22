@@ -1,17 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserDataRequestService } from '../server-services/user-data-request.service';
+import { UserDataRequestService } from '../../../../core/services/server-services/user-data-request.service';
+import { DATA_REQUEST_STRATEGY, IUserDataRequestService } from '../../../../interfaces/user-data-request.interface';
 import { Subscription } from 'rxjs';
-import { SpinnerOverlayComponent } from '../loader/spinner-overlay/spinner-overlay.component';
+import { SpinnerOverlayComponent } from '../../../../shared/components/loader-overlay/spinner-overlay.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { ButtonComponent } from "../../../../shared/components/button/button.component";
 
 @Component({
   selector: 'app-log-in',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SpinnerOverlayComponent],
+  imports: [ReactiveFormsModule, CommonModule, SpinnerOverlayComponent, ButtonComponent],
   templateUrl: './log-in.component.html',
   styleUrl: './log-in.component.scss',
+  providers: [
+    {
+      provide: DATA_REQUEST_STRATEGY,
+      useClass: UserDataRequestService,
+    }
+  ]
 })
 export class LogINComponent {
   logForm!: FormGroup;
@@ -21,14 +30,19 @@ export class LogINComponent {
   #wrongPasswordsCounter = 0;
 
   constructor(
-    private readonly userDataRequestService: UserDataRequestService,
-    private readonly changeDetectorRef: ChangeDetectorRef) {  }
+    @Inject(DATA_REQUEST_STRATEGY) private readonly userDataRequestService: IUserDataRequestService,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly router: Router) {  }
 
   ngOnInit() {
     this.logForm = new FormGroup({
       username: new FormControl(null, Validators.required),
       password: new FormControl(null),
     });
+  }
+
+  onClick() {
+    this.router.navigate(['home']); 
   }
 
   onSubmit() { 
@@ -55,10 +69,15 @@ export class LogINComponent {
             this.#wrongPasswordsCounter++;
           }
 
+          if (this.#wrongPasswordsCounter == 3) {
+            this.router.navigate(['/home']);
+          }
+
           this.changeDetectorRef.markForCheck();
 
         },
       });
+
   }
 
   ngOnDestroy(){

@@ -18,23 +18,23 @@ public class FileUserRepository : IUserRepository
     {
         if (!File.Exists(_filepath))
         {
-            using (FileStream fs = new FileStream(_filepath, FileMode.CreateNew, FileAccess.Write))
-            using (StreamWriter writer = new StreamWriter(fs, Encoding.UTF8))
+            using FileStream fs = new FileStream(_filepath, FileMode.CreateNew, FileAccess.Write);
+            using StreamWriter writer = new StreamWriter(fs, Encoding.UTF8);
+            
+            // Создаем объект администратора с пустым паролем
+            var adminUser = new UserModel
             {
-                // Создаем объект администратора с пустым паролем
-                var adminUser = new UserModel
-                {
-                    Username = Encoding.UTF8.GetBytes("admin"),
-                    Password = new byte[0], // Пустой пароль
-                    PasswordLength = 0,
-                    IsAdminLocked = false,
-                    IsPasswordRestricted = false
-                };
+                Username = Encoding.UTF8.GetBytes("admin"),
+                Password = new byte[0], // Пустой пароль
+                PasswordLength = 0,
+                IsAdminLocked = false,
+                IsPasswordRestricted = false
+            };
 
-                // Записываем данные в файл
-                string userData = $"{Convert.ToBase64String(adminUser.Username)},{Convert.ToBase64String(adminUser.Password)},{adminUser.PasswordLength},{adminUser.IsAdminLocked},{adminUser.IsPasswordRestricted}";
-                writer.WriteLine(userData);
-            }
+            // Записываем данные в файл
+            string userData = $"{Convert.ToBase64String(adminUser.Username)},{Convert.ToBase64String(adminUser.Password)},{adminUser.PasswordLength},{adminUser.IsAdminLocked},{adminUser.IsPasswordRestricted}";
+            writer.WriteLine(userData);
+            
         }
     }
 
