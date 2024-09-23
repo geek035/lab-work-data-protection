@@ -9,12 +9,12 @@
             <div class="form__group">
                 <label class="form__label">Имя пользователя: </label>
                 <input type="text" class="form__field"
-                    formControlName="username">
+                    formControlName="username" />
             </div>
             <div class="form__group">
                 <label class="form__label">Пароль: </label>
                 <input type="password" class="form__field"
-                    formControlName="password">
+                    formControlName="password" />
             </div>
         </div>
 
@@ -33,11 +33,7 @@
         </div>
         
         <div class="form__buttons-group">
-            <app-button [buttonType]="'submit'" 
-                class="form__button">
-                
-                Ок
-            </app-button>
+            <app-button [buttonType]="'submit'">Ок</app-button>
             <app-button [onClickHandler]="onClick.bind(this)">Отмена</app-button>
         </div>
     </form>

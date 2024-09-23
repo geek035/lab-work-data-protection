@@ -7,5 +7,5 @@ export const DATA_REQUEST_STRATEGY =
     new InjectionToken<IUserDataRequestService>('Data request strategy implementing')
 
 export interface IUserDataRequestService {
-    getUserData(username: string, password: string): Observable<UserData | HttpErrorResponse>
+    getUserData(): Observable<UserData[] | HttpErrorResponse>
 }

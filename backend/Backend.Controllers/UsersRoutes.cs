@@ -1,0 +1,8 @@
+namespace Backend.models;
+
+public static class UsersRoutes
+{
+    public const string AddUser = "add";
+    public const string UpdateUser = "update";
+    public const string LoginUser = "login";
+}

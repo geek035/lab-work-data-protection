@@ -4,7 +4,7 @@ using Backend.models;
 using System.IO;
 using System.Text;
 
-public class FileUserRepository : IUserRepository
+internal class FileUserRepository : IUserRepository
 {
     private readonly string _filepath;
 
@@ -16,11 +16,17 @@ public class FileUserRepository : IUserRepository
 
     private void InitializeFile()
     {
-        if (!File.Exists(_filepath))
+
+        if (File.Exists(_filepath))
+        {
+            File.Delete(_filepath);
+        }
+
+        try
         {
             using FileStream fs = new FileStream(_filepath, FileMode.CreateNew, FileAccess.Write);
             using StreamWriter writer = new StreamWriter(fs, Encoding.UTF8);
-            
+
             // Создаем объект администратора с пустым паролем
             var adminUser = new UserModel
             {
@@ -32,9 +38,18 @@ public class FileUserRepository : IUserRepository
             };
 
             // Записываем данные в файл
-            string userData = $"{Convert.ToBase64String(adminUser.Username)},{Convert.ToBase64String(adminUser.Password)},{adminUser.PasswordLength},{adminUser.IsAdminLocked},{adminUser.IsPasswordRestricted}";
-            writer.WriteLine(userData);
+            string userData = $"{Encoding.UTF8.GetString(adminUser.Username)},"
+                            + $"{Encoding.UTF8.GetString(adminUser.Password)},"
+                            + $"{adminUser.PasswordLength},"
+                            + $"{adminUser.IsAdminLocked},"
+                            + $"{adminUser.IsPasswordRestricted}";
             
+            writer.WriteLine(userData);
+            writer.Flush(); // Явная запись данных на диск
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error writing to file: {ex.Message}");
         }
     }
 
@@ -43,7 +58,11 @@ public class FileUserRepository : IUserRepository
         using (FileStream fs = new FileStream(_filepath, FileMode.Append, FileAccess.Write))
         using (StreamWriter writer = new StreamWriter(fs, Encoding.UTF8))
         {
-            string userData = $"{Convert.ToBase64String(user.Username)},{Convert.ToBase64String(user.Password)},{user.PasswordLength},{user.IsAdminLocked},{user.IsPasswordRestricted}";
+            string userData = $"{Encoding.UTF8.GetString(user.Username)},"
+                            + $"{Encoding.UTF8.GetString(user.Password)},"
+                            + $"{user.PasswordLength},"
+                            + $"{user.IsAdminLocked},"
+                            + $"{user.IsPasswordRestricted}";
             writer.WriteLine(userData);
         }
 
@@ -61,12 +80,12 @@ public class FileUserRepository : IUserRepository
         {
             string? line;
             while ((line = reader.ReadLine()) != null)
-            {
+            {   
                 var data = line.Split(',');
                 var user = new UserModel 
                 {
-                    Username = Convert.FromBase64String(data[0]),
-                    Password = Convert.FromBase64String(data[1]),
+                    Username = Encoding.UTF8.GetBytes(data[0]),
+                    Password = Encoding.UTF8.GetBytes(data[1]),
                     PasswordLength = int.Parse(data[2]),
                     IsAdminLocked = bool.Parse(data[3]),
                     IsPasswordRestricted = bool.Parse(data[4])
@@ -97,7 +116,12 @@ public class FileUserRepository : IUserRepository
         {
             foreach (var user in users)
             {
-                string userData = $"{Convert.ToBase64String(user.Username)},{Convert.ToBase64String(user.Password)},{user.PasswordLength},{user.IsAdminLocked},{user.IsPasswordRestricted}";
+                string userData = $"{Encoding.UTF8.GetString(user.Username)},"
+                            + $"{Encoding.UTF8.GetString(user.Password)},"
+                            + $"{user.PasswordLength},"
+                            + $"{user.IsAdminLocked},"
+                            + $"{user.IsPasswordRestricted}";
+
                 writer.WriteLine(userData);
             }
         }

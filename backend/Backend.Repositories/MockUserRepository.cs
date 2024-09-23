@@ -3,7 +3,7 @@ using Backend.interfaces;
 using Backend.models;
 using System.Text;
 
-public class MockUserRepository : IUserRepository
+internal class MockUserRepository : IUserRepository
 {
     private readonly List<UserModel> _users;
 

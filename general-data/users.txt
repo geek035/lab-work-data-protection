@@ -1,1 +1,2 @@
-﻿YWRtaW4=,,0,False,False
+﻿admin,,0,False,False
+user1,qwerty,6,False,False

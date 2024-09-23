@@ -55,7 +55,6 @@ export class LogINComponent {
           this.showSpinner = false;
           this.#wrongPasswordsCounter = 0;
           this.changeDetectorRef.markForCheck();
-          console.log(responce);
           this.router.navigate(["user", (responce as LoginResponse).user.username]);
         },
         error: (error: HttpErrorResponse) => { 

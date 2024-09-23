@@ -1,6 +1,16 @@
 <app-loader-overlay [showLoader]="showLoader">
     <section class="user-panel">
         <h2 class="user-panel__header">{{username}}</h2>
-        <app-admin-panel *ngIf="username === 'admin'"></app-admin-panel>
+        <div class="user-panel__controls">
+            <app-button>Сменить пароль</app-button>
+        </div>
+
+
+        <div class="user-panel__panel">
+            <app-change-password></app-change-password>
+        </div>
+
+        <button (click)="onClickHandler()">Отправить</button>
+
     </section>
 </app-loader-overlay>

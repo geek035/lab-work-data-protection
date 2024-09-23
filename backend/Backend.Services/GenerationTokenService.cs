@@ -25,7 +25,7 @@ public class GenerationTokenService : IGenerationTokenService
 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.username), // Преобразуем в строку
+            new Claim("Username", user.username),
             new Claim("IsAdminLocked", user.IsAdminLocked.ToString()),
             new Claim("IsPasswordRestricted", user.IsPasswordRestricted.ToString())
         };

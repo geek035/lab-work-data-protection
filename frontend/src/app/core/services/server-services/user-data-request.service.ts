@@ -14,19 +14,15 @@ export class UserDataRequestService implements IUserDataRequestService {
     private readonly serverConfig: ConfigService,
     private readonly http: HttpClient) { }
 
-  getUserData(username: string, password: string): Observable<UserData | HttpErrorResponse> {
+  getUserData(): Observable<UserData[] | HttpErrorResponse> {
     const serverURL = this.serverConfig.getServerUrl();
-    const payload = {
-      username: username,
-      password: password || "",
-    }
     
-    return this.http.post<UserData>(`${serverURL}/api/users/login`, payload).pipe(
+    return this.http.get<UserData[]>(`${serverURL}/api/users`).pipe(
       exhaustMap(response => {
           return of(response);
         }),
       catchError(error => {
         return throwError(() => error);
-      })) as Observable<UserData | HttpErrorResponse>;
+      })) as Observable<UserData[] | HttpErrorResponse>;
   }
 }
