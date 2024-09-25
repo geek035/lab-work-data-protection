@@ -1,0 +1,17 @@
+.description {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+
+    &__header {
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    &__text {
+
+    }
+}

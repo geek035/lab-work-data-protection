@@ -13,9 +13,11 @@ import { Input } from '@angular/core';
 
   styles: `
     .button {
-      width: 100px;
+      min-width: 100px;
+      max-width: 150px;
+      padding: 0.1rem;
       cursor: pointer;
-      height: 35px;
+      min-height: 35px;
       text-transform: uppercase;
       border-radius: 5px;
       transition: background-color .3s ease-out;

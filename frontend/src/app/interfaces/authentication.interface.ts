@@ -1,7 +1,7 @@
 import { InjectionToken } from "@angular/core";
 import { Observable } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
-import { LoginResponse } from "../models/login-response";
+import { LoginResponse } from "../models/login-response.model";
 
 export const AUTHENTICATION_STRATEGY = 
     new InjectionToken<IAuthenticationService>('Authentication strategy implementation');

@@ -3,7 +3,7 @@ import { IAuthenticationService } from '../../../interfaces/authentication.inter
 import { catchError, exhaustMap, Observable, of, tap, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ConfigService } from '../config-service/config.service';
-import { LoginResponse } from '../../../models/login-response';
+import { LoginResponse } from '../../../models/login-response.model';
 
 @Injectable({
   providedIn: 'root'

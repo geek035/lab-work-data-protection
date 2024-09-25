@@ -8,11 +8,18 @@ namespace Backend.services;
 public class UserService: IUserService
 {
     private readonly IUserRepository _userRepository;
-    public UserService(IUserRepository userRepository) {
+    private readonly IHashingPasswordService _hashingPasswordService;
+    public UserService(
+        IUserRepository userRepository,
+        IHashingPasswordService hashingPasswordService
+        ) {
+        
         _userRepository = userRepository;
+        _hashingPasswordService = hashingPasswordService;
     }
 
     public void RegisterUser(string username) {
+        
         var newUser = convertToAPIUserData(new UserDTO
         {
             username = username,
@@ -23,7 +30,8 @@ public class UserService: IUserService
         _userRepository.SaveUser(newUser);
     }
 
-    public List<UserDTO> GetAllUsers() {
+    public List<UserDTO> GetAllUsers() 
+    {
         var users =  _userRepository.LoadUsers();
         List<UserDTO> data = [];
 
@@ -33,8 +41,35 @@ public class UserService: IUserService
         return data;
     }
 
-    public void UpdateUser(ChangeDataRequest data) {
+    public bool checkPassword(string username, string password)
+    {
+        var user = _userRepository.LoadSpecificUser(Encoding.UTF8.GetBytes(username));
+    
+        if (user == null) { return false; }
+
+        if (Encoding.UTF8.GetString(user.Password) == password) { return true; }
+
+        return _hashingPasswordService
+            .VerifyPassword(password, Encoding.UTF8.GetString(user.Password));
+    }
+
+    public void UpdatePassword(ChangePasswordRequest data) {
         var user = GetUserByUsername(data.Username);
+
+        if (user == null) { return; }
+
+        data.Password = _hashingPasswordService.HashPassword(data.Password);
+
+        _userRepository.UpdateUser(convertToAPIUserData(new UserDTO
+        {
+           username = data.Username,
+           IsAdminLocked = user.IsAdminLocked,
+           IsPasswordRestricted = user.IsPasswordRestricted,
+        }, data.Password));
+    }
+
+    public void UpdateUser(ChangeDataRequest data) {
+        var user =  _userRepository.LoadSpecificUser(Encoding.UTF8.GetBytes(data.Username.ToLower()));
 
         if (user == null) { return; }
 
@@ -43,7 +78,7 @@ public class UserService: IUserService
            username = data.Username,
            IsAdminLocked = data?.IsAdminLocked ?? user.IsAdminLocked,
            IsPasswordRestricted = data?.IsPasswordRestricted ?? user.IsPasswordRestricted,
-        }, data?.Password));
+        }, Encoding.UTF8.GetString(user.Password)));
     }
 
     public UserDTO? GetUserByUsername(string username) {

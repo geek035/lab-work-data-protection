@@ -1,16 +1,30 @@
 <app-loader-overlay [showLoader]="showLoader">
     <section class="user-panel">
         <h2 class="user-panel__header">{{username}}</h2>
-        <div class="user-panel__controls">
-            <app-button>Сменить пароль</app-button>
+        <div class="user-panel__controls" (click)="onMenuPanelClick($event)">
+            <ng-container *ngIf="showMenuItems">
+                <app-button data-action="change-password">Сменить пароль</app-button>
+
+                <app-button *ngIf="isAdmin" 
+                    data-action="add-user">
+                    
+                    Добавить пользователя
+                </app-button>
+
+                <app-button data-action="logout">Выйти</app-button>
+            </ng-container>
         </div>
 
 
         <div class="user-panel__panel">
-            <app-change-password></app-change-password>
+            <div class="input-panel">
+                <router-outlet></router-outlet>
+            </div>
+            <div class="info-panel">
+                <h3 class="info-panel__header">Информационная панель</h3>
+                <p class="info-panel__message" #infoMessage></p>
+            </div>
         </div>
-
-        <button (click)="onClickHandler()">Отправить</button>
 
     </section>
 </app-loader-overlay>

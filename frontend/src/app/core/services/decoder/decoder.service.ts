@@ -7,9 +7,9 @@ export class DecoderService {
 
   constructor() { }
 
-  public compareUsernames(username: string, token: string): boolean {
+  public getName(token: string): string {
     const payload = this.decodeToken(token);
-    return payload.Username == username;
+    return payload.Username;
   }
 
   private decodeToken(token: string): any {

@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { AUTHENTICATION_STRATEGY, IAuthenticationService } from '../../../../interfaces/authentication.interface';
 import { AuthenticationService } from '../../../../core/services/authentication-service/authentication.service';
-import { LoginResponse } from '../../../../models/login-response';
+import { LoginResponse } from '../../../../models/login-response.model';
 
 @Component({
   selector: 'app-log-in',
@@ -55,7 +55,7 @@ export class LogINComponent {
           this.showSpinner = false;
           this.#wrongPasswordsCounter = 0;
           this.changeDetectorRef.markForCheck();
-          this.router.navigate(["user", (responce as LoginResponse).user.username]);
+          this.router.navigate([`user/${(responce as LoginResponse).user.username}/description`]);
         },
         error: (error: HttpErrorResponse) => { 
           this.showSpinner = false;

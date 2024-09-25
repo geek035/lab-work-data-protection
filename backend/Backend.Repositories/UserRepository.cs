@@ -6,50 +6,50 @@ using System.Text;
 
 internal class FileUserRepository : IUserRepository
 {
-    private readonly string _filepath;
+    private readonly string _filepath = "../general-data/users.txt";
+    private readonly IHashingPasswordService _hashingPasswordService;
 
-    public FileUserRepository(string filepath)
+    public FileUserRepository(IHashingPasswordService hashingPasswordService)
     {
-        _filepath = filepath;
+        _hashingPasswordService = hashingPasswordService;
         InitializeFile();
     }
 
     private void InitializeFile()
     {
-
-        if (File.Exists(_filepath))
+        if (!File.Exists(_filepath))
         {
-            File.Delete(_filepath);
-        }
-
-        try
-        {
-            using FileStream fs = new FileStream(_filepath, FileMode.CreateNew, FileAccess.Write);
-            using StreamWriter writer = new StreamWriter(fs, Encoding.UTF8);
-
-            // Создаем объект администратора с пустым паролем
-            var adminUser = new UserModel
+            try
             {
-                Username = Encoding.UTF8.GetBytes("admin"),
-                Password = new byte[0], // Пустой пароль
-                PasswordLength = 0,
-                IsAdminLocked = false,
-                IsPasswordRestricted = false
-            };
+                using FileStream fs = new FileStream(_filepath, FileMode.CreateNew, FileAccess.Write);
+                using StreamWriter writer = new StreamWriter(fs, Encoding.UTF8);
 
-            // Записываем данные в файл
-            string userData = $"{Encoding.UTF8.GetString(adminUser.Username)},"
-                            + $"{Encoding.UTF8.GetString(adminUser.Password)},"
-                            + $"{adminUser.PasswordLength},"
-                            + $"{adminUser.IsAdminLocked},"
-                            + $"{adminUser.IsPasswordRestricted}";
-            
-            writer.WriteLine(userData);
-            writer.Flush(); // Явная запись данных на диск
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error writing to file: {ex.Message}");
+                // Создаем объект администратора с пустым паролем
+                var adminUser = new UserModel
+                {
+                    Username = Encoding.UTF8.GetBytes("admin"),
+                    Password = new byte[0], // Пустой пароль
+                    PasswordLength = 0,
+                    IsAdminLocked = false,
+                    IsPasswordRestricted = false
+                };
+
+                var password = _hashingPasswordService.HashPassword("");
+
+                // Записываем данные в файл
+                string userData = $"{Encoding.UTF8.GetString(adminUser.Username)},"
+                                + $"{Encoding.UTF8.GetString(adminUser.Password)},"
+                                + $"{adminUser.PasswordLength},"
+                                + $"{adminUser.IsAdminLocked},"
+                                + $"{adminUser.IsPasswordRestricted}";
+                
+                writer.WriteLine(userData);
+                writer.Flush(); // Явная запись данных на диск
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error writing to file: {ex.Message}");
+            }
         }
     }
 
@@ -57,7 +57,9 @@ internal class FileUserRepository : IUserRepository
     {
         using (FileStream fs = new FileStream(_filepath, FileMode.Append, FileAccess.Write))
         using (StreamWriter writer = new StreamWriter(fs, Encoding.UTF8))
+
         {
+            var password = _hashingPasswordService.HashPassword(Encoding.UTF8.GetString(user.Password));
             string userData = $"{Encoding.UTF8.GetString(user.Username)},"
                             + $"{Encoding.UTF8.GetString(user.Password)},"
                             + $"{user.PasswordLength},"

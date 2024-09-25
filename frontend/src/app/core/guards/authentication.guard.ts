@@ -18,13 +18,12 @@ export class AuthenticationGuard implements CanActivate {
     next: ActivatedRouteSnapshot, 
     state: RouterStateSnapshot): boolean {
       
-      if (this.authenticationService.isLoggedIn()
-        && this.decoder.compareUsernames(
-          next.params['id'],
-          sessionStorage.getItem('token') as string
-        )) {
-
-        return true;
+      if (this.authenticationService.isLoggedIn()) {
+    
+        const token = sessionStorage.getItem('token') as string;
+        const username = this.decoder.getName(token);
+        
+        if (username == next.params['id']) { return true; }
       }
     
       this.router.navigate(['login']);

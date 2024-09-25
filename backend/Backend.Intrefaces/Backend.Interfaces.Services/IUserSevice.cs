@@ -8,4 +8,6 @@ public interface IUserService {
     List<UserDTO> GetAllUsers();
     UserDTO? GetUserByUsername(string username);
     public void UpdateUser(ChangeDataRequest data);
+    public void UpdatePassword(ChangePasswordRequest data);
+    public bool checkPassword(string username, string password);
 }

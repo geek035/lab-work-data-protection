@@ -19,19 +19,19 @@ builder.Services
     .AddFluentValidationAutoValidation()
     .AddFluentValidationClientsideAdapters();
 
-builder.Services
-    .AddSingleton<IUserRepository, FileUserRepository>(
-        provider => new FileUserRepository("../general-data/users.txt")
-);
+builder.Services.AddScoped<IHashingPasswordService, HashingPasswordService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IUserRepository, FileUserRepository>();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IValidator<UserDTO>, UserDTOValidator>();
 builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 builder.Services.AddScoped<IGenerationTokenService, GenerationTokenService>();
-builder.Services.AddScoped<IChangeDataRequestValidator<ChangeDataRequest>, ChangeDataRequestValidator>();
+builder.Services.AddScoped<IValidator<ChangeDataRequest>, ChangeDataRequestValidator>();
+builder.Services.AddScoped<IChangePasswordRequestValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
 builder.Services.AddCors(options => {
     options.AddPolicy("AllowAngularOrigin", builder => 

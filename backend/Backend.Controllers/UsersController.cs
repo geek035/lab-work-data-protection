@@ -14,19 +14,23 @@ public class UsersController: ControllerBase
     private readonly IValidator<LoginRequest> _loginRequestValidator;
     private readonly IUserAuthenticationService _authenticationService;
     private readonly IGenerationTokenService _generationTokenService;
-    private readonly IChangeDataRequestValidator<ChangeDataRequest> _changeDataRequestValidator;
+    private readonly IChangePasswordRequestValidator<ChangePasswordRequest> _changePasswordRequestValidator;
+    private readonly IValidator<ChangeDataRequest> _changeDataRequestValidator;
+
 
     public UsersController(
         IUserService userService, 
         IValidator<LoginRequest> loginRequestValidator,
         IUserAuthenticationService userAuthenticationService,
         IGenerationTokenService generationTokenService,
-        IChangeDataRequestValidator<ChangeDataRequest> changeDataRequestValidator)
+        IChangePasswordRequestValidator<ChangePasswordRequest> changePasswordRequestValidator,
+        IValidator<ChangeDataRequest> changeDataRequestValidator)
     {
         _userService = userService;
         _loginRequestValidator = loginRequestValidator;
         _authenticationService = userAuthenticationService;
         _generationTokenService = generationTokenService;
+        _changePasswordRequestValidator = changePasswordRequestValidator;
         _changeDataRequestValidator = changeDataRequestValidator;
     }
 
@@ -43,14 +47,61 @@ public class UsersController: ControllerBase
     [Route(UsersRoutes.AddUser)]
     public ActionResult<UserDTO> Add([FromBody] string username)
     {
+
         if (username == null || username.Length == 0)
         {
             return BadRequest("Invalid username");
         }
 
+        var user = _userService.GetUserByUsername(username);
+
+        if (user != null) {
+            return BadRequest("Пользователь уже существует");
+        }
+
         _userService.RegisterUser(username);
 
         return Ok(_userService.GetUserByUsername(username));
+}
+
+    [UsersOnly]
+    [HttpPost]
+    [Route(UsersRoutes.updatePassword)]
+    public ActionResult<UserDTO> UpdatePassword([FromBody] ChangePasswordRequest changePasswordRequest)
+    {
+        var validationResult = _changePasswordRequestValidator.Validate(changePasswordRequest);
+
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
+        if (changePasswordRequest.Username != HttpContext.User.FindFirst("Username")?.Value) {
+            return BadRequest("Нельзя менять пароль другого пользователя");
+        }
+
+        var user = _userService.GetUserByUsername(changePasswordRequest.Username);
+
+        if (user == null) { return NotFound("User not found at repository"); }
+
+        if (changePasswordRequest.Password != null && user.IsPasswordRestricted)
+        {
+            var canUpdate = _changePasswordRequestValidator
+                .isSatisfactoryCondition(changePasswordRequest.Password);
+
+            if (!canUpdate) 
+            {
+                return BadRequest("Incorrect password to change");
+            }
+        }
+
+        _userService.UpdatePassword(changePasswordRequest);
+
+        user = _userService.GetUserByUsername(changePasswordRequest.Username);
+        
+        if (user == null) { return BadRequest("Can't add user"); }
+        
+        return Ok(user);
     }
 
     [AdminOnly]
@@ -69,17 +120,6 @@ public class UsersController: ControllerBase
 
         if (user == null) { return NotFound("User not found at repository"); }
 
-        if (changeDataRequest.Password != null && user.IsPasswordRestricted)
-        {
-            var canUpdate = _changeDataRequestValidator
-                .isSatisfactoryCondition(changeDataRequest.Password);
-
-            if (!canUpdate) 
-            {
-                return BadRequest("Incorrect password to change");
-            }
-        }
-
         _userService.UpdateUser(changeDataRequest);
 
         user = _userService.GetUserByUsername(changeDataRequest.Username);
@@ -87,6 +127,20 @@ public class UsersController: ControllerBase
         if (user == null) { return BadRequest("Can't add user"); }
         
         return Ok(user);
+    }
+
+    [UsersOnly]
+    [HttpPost]
+    [Route(UsersRoutes.checkPassword)]
+    public ActionResult<bool> CheckPassword([FromBody] LoginRequest data)
+    {
+        if (data.Username != HttpContext.User.FindFirst("Username")?.Value) {
+            return BadRequest("Нельзя проверять пароли других пользователей");
+        }
+
+        var result = _userService.checkPassword(data.Username, data.Password);
+
+        return Ok(result);
     }
     
     [HttpPost]

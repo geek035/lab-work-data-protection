@@ -1,0 +1,26 @@
+<app-loader-overlay [showLoader]="showLoader">
+    <form class="form" [formGroup]="form" (submit)="onSubmit()">
+
+        <label class="form__header">Смена пароля</label>
+
+        <div class="form-fields-box">
+            <div class="form-fields-group">
+                <label class="form__label">Имя пользователя: </label>
+                <input type="text" class="form-fields-group__field" formControlName="username" />
+            </div>
+        </div>
+
+        <div class="form-message-box">
+            <p class="form-message-box__message form-message-box__message_error"
+                *ngIf="form.controls['username'].getError('requestErr')">
+
+                Что-то пошло не так во время добавления пользователя
+            </p>
+        </div>
+
+        <div class="form-buttons-group">
+            <app-button [buttonType]="'submit'">Ок</app-button>
+            <app-button [onClickHandler]="onClick.bind(this)">Отмена</app-button>
+        </div>
+    </form>
+</app-loader-overlay>
