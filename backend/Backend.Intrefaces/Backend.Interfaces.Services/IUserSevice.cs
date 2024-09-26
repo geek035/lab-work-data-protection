@@ -10,4 +10,5 @@ public interface IUserService {
     public void UpdateUser(ChangeDataRequest data);
     public void UpdatePassword(ChangePasswordRequest data);
     public bool checkPassword(string username, string password);
+    public void updateAllUsers(List<UserDTO> usersData);
 }

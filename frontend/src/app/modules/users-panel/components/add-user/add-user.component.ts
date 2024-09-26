@@ -8,6 +8,7 @@ import { NgIf } from '@angular/common';
 import { ButtonComponent } from "../../../../shared/components/button/button.component";
 import { UserUpdateDataService } from '../../../../core/services/user-update-data-service/user-update-data.service';
 import { UserDataToUpdate } from '../../../../models/user-data-to-update.model';
+import { IUserPanelState } from '../../../../interfaces/user-panel-state.interface';
 
 @Component({
   selector: 'app-add-user',
@@ -64,13 +65,19 @@ export class AddUserComponent {
 
   onSubmit() {
     const username = this.form.controls['username'].value;
+
+    if (username == null) {
+      this.form.controls['username'].setErrors({emptyField: true});
+      return;
+    }
+
     this.showLoader = true;
     this._changeDetectorRef.markForCheck();
     this.userDataUpdateService
-      .addUser(new UserDataToUpdate(username, undefined, undefined, undefined))
+      .addUser(new UserDataToUpdate(username, undefined, undefined))
       .subscribe({
         next: (response) => {
-          this.userPanelState.setState({passwordUpdate: undefined, newUser: username});
+          this.userPanelState.setState({newUser: username} as IUserPanelState);
           this.showLoader = false;
           this._changeDetectorRef.markForCheck();
         },

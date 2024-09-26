@@ -11,6 +11,17 @@
                     Добавить пользователя
                 </app-button>
 
+                <app-button *ngIf="isAdmin" 
+                    data-action="users-list">
+                    
+                    Список пользователей
+                </app-button>
+
+                <app-button data-action="description">
+                    
+                    О программе
+                </app-button>
+
                 <app-button data-action="logout">Выйти</app-button>
             </ng-container>
         </div>

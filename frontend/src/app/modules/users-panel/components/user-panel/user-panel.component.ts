@@ -39,25 +39,28 @@ export class UserPanelComponent {
     private readonly userPanelState: UserPanelStateService,
   ) { }
 
+  ngAfterViewInit() {
+    
+  }
+
   ngOnInit(){
     this.username = this.activeRoute.snapshot.params['id'];
     if (this.username == 'admin') { this.isAdmin = true; }
-
-    console.log(this.username);
 
     this.userDataRequestService.checkPassword(this.username, "")
     .subscribe({
       next: (response) => {
         if (response) {
           this.showLoader = false;
-          this.router.navigate([`user/${this.username}/change-password`],
-              { state: {username: this.username}}
-          );
           this.infoMessageElement.nativeElement.textContent ='Введите новый пароль'
+          this.router.navigate([`user/${this.username}/change-password`],
+              { state: {username: this.username, firstRegistration: true }}
+          );
           this.changeDetectorRef.markForCheck();
         } else {
           this.showLoader = false;
           this.showMenuItems = true;
+          this.router.navigate([`user/${this.username}/description`]);
           this.changeDetectorRef.markForCheck();
         }
       },
@@ -91,6 +94,16 @@ export class UserPanelComponent {
             { state: {username: this.username}}
           );
           break;
+
+        case 'users-list':
+          this.router.navigate([`user/${this.username}/users-list`],
+              { state: {username: this.username}}
+          );
+          break;
+
+        case 'description':
+          this.router.navigate([`user/${this.username}/description`]);
+          break;
   
         case 'logout':
           this.authenticationService.logout();
@@ -104,12 +117,16 @@ export class UserPanelComponent {
 
   private responseUpdateState(data: IUserPanelState): void {
     if (data?.passwordUpdate) {
-      if (this.isAdmin && !this.showMenuItems) { this.showMenuItems = true; }
+      this.showMenuItems = true;
       this.infoMessageElement.nativeElement.textContent = 'Пароль успешно обновлен';
     }
 
     if (data?.newUser) {
       this.infoMessageElement.nativeElement.textContent = `Добавлен новый пользователь ${data.newUser}`;
+    }
+
+    if(data?.updatedUsers) {
+      this.infoMessageElement.nativeElement.textContent = 'Данные о пользователях обновлены'
     }
   }
 

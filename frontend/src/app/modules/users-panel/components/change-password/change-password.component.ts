@@ -19,9 +19,10 @@ import {
   IUserUpdateDataService,
   USER_DATA_UPDATE_STRATEGY,
 } from '../../../../interfaces/user-update-data.interface';
-import { UserDataToUpdate } from '../../../../models/user-data-to-update.model';
 import { UserUpdateDataService } from '../../../../core/services/user-update-data-service/user-update-data.service';
 import { UserPanelStateService } from '../services/user-panel-state/user-panel-state.service';
+import { changePasswordRequest } from '../../../../models/change-password-request';
+import { IUserPanelState } from '../../../../interfaces/user-panel-state.interface';
 
 @Component({
   selector: 'app-change-password',
@@ -42,6 +43,7 @@ export class ChangePasswordComponent {
   public showLoader = true;
 
   public username!: string;
+  public firstRegistration = false;
 
   constructor(
     @Inject(USER_DATA_UPDATE_STRATEGY)
@@ -61,9 +63,11 @@ export class ChangePasswordComponent {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras.state) {
       this.username = navigation.extras.state['username'];
+      this.firstRegistration = navigation.extras.state['firstRegistration'] ?? false;
     } else {
       // Если навигация уже завершена, то можно получить данные через `history.state`
       this.username = history.state['username'];
+      this.firstRegistration = history.state['firstRegistration'] ?? false;
     }
     
     if (!this.username) {
@@ -88,14 +92,16 @@ export class ChangePasswordComponent {
     this.showLoader = true;
     this._changeDetectorRef.markForCheck();
     this.userDataUpdateService
-      .updateData(
-        new UserDataToUpdate(this.username, newPassword, undefined, undefined),
+      .changePassword(
+        new changePasswordRequest(this.username, newPassword),
         oldPassword
       )
       .subscribe({
         next: (response) => {
           this.showLoader = false;
-          this.userPanelState.setState({passwordUpdate: true, newUser: undefined});
+          this.firstRegistration = false;
+          this.userPanelState.setState({passwordUpdate: true} as IUserPanelState);
+          this.router.navigate([`user/${this.username}/description`]);
           this._changeDetectorRef.markForCheck();
         },
         error: (err) => {
@@ -109,6 +115,11 @@ export class ChangePasswordComponent {
   }
 
   onClick() {
-    this.router.navigate([`user/${this.username}/description`]);
+    if (this.firstRegistration) {
+      sessionStorage.removeItem('token');
+      this.router.navigate([`home`]);
+    } else {
+      this.router.navigate([`user/${this.username}/description`]);
+    }
   }
 }

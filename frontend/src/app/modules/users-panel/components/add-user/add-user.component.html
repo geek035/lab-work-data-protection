@@ -12,9 +12,15 @@
 
         <div class="form-message-box">
             <p class="form-message-box__message form-message-box__message_error"
+                *ngIf="form.controls['username'].getError('emptyField')">
+
+                Имя не должно быть пустым
+            </p>
+
+            <p class="form-message-box__message form-message-box__message_error"
                 *ngIf="form.controls['username'].getError('requestErr')">
 
-                Что-то пошло не так во время добавления пользователя
+                Пользователь уже существует
             </p>
         </div>
 

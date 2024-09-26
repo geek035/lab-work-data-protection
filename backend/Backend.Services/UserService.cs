@@ -18,6 +18,22 @@ public class UserService: IUserService
         _hashingPasswordService = hashingPasswordService;
     }
 
+    public void updateAllUsers(List<UserDTO> usersData) {
+        var users = _userRepository.LoadUsers();
+
+        for (var i = 0; i < usersData.Count; i++) {
+            users[i] = new UserModel
+            {
+                Username = Encoding.UTF8.GetBytes(usersData[i].username),
+                Password = users[i].Password,
+                IsAdminLocked = usersData[i].IsAdminLocked,
+                IsPasswordRestricted = usersData[i].IsPasswordRestricted,
+            };
+        }
+
+        _userRepository.UpdateAllUsers(users);
+    }
+
     public void RegisterUser(string username) {
         
         var newUser = convertToAPIUserData(new UserDTO

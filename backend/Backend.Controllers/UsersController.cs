@@ -36,32 +36,48 @@ public class UsersController: ControllerBase
 
     [AdminOnly]
     [HttpGet]
-    public ActionResult<IEnumerable<UserDTO>> GetAllUser()
+    public ActionResult<List<UserDTO>> GetAllUser()
     {
         var users = _userService.GetAllUsers();
         return Ok(users);
     }
 
     [AdminOnly]
+    [HttpPost]
+    [Route(UsersRoutes.updateAllUsers)]
+    public ActionResult<string> UpdateUsers([FromBody] List<UserDTO> usersData) {
+        var usersLength = _userService.GetAllUsers().Count;
+        
+
+        if (usersData.Count != usersLength) {
+            return BadRequest("Ошибка обновления");
+        }
+
+        _userService.updateAllUsers(usersData);
+        return Ok();
+    }
+
+
+    [AdminOnly]
     [HttpPut]
     [Route(UsersRoutes.AddUser)]
-    public ActionResult<UserDTO> Add([FromBody] string username)
+    public ActionResult<UserDTO> Add([FromBody] ChangeDataRequest data)
     {
 
-        if (username == null || username.Length == 0)
+        if (data.Username == null || data.Username.Length == 0)
         {
             return BadRequest("Invalid username");
         }
 
-        var user = _userService.GetUserByUsername(username);
+        var user = _userService.GetUserByUsername(data.Username);
 
         if (user != null) {
             return BadRequest("Пользователь уже существует");
         }
 
-        _userService.RegisterUser(username);
+        _userService.RegisterUser(data.Username);
 
-        return Ok(_userService.GetUserByUsername(username));
+        return Ok(_userService.GetUserByUsername(data.Username));
 }
 
     [UsersOnly]

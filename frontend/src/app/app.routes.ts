@@ -7,6 +7,7 @@ import { LogInGuard } from './core/guards/log-in.guard';
 import { ChangePasswordComponent } from './modules/users-panel/components/change-password/change-password.component';
 import { DescriptionComponent } from './modules/users-panel/components/description/description.component';
 import { AddUserComponent } from './modules/users-panel/components/add-user/add-user.component';
+import { UsersListComponent } from './modules/users-panel/components/users-list/users-list.component';
 
 export const routes: Routes = [
     
@@ -29,6 +30,7 @@ export const routes: Routes = [
             { path: 'change-password', component: ChangePasswordComponent },
             { path: 'description', component: DescriptionComponent },
             { path: 'add-user', component: AddUserComponent },
+            { path: 'users-list', component: UsersListComponent}
 
         ]
         

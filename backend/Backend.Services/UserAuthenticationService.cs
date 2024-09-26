@@ -25,6 +25,11 @@ public class UserAuthenticationService : IUserAuthenticationService
             return new AuthenticationResult { IsSuccessful = false, ErrorMessage = "User not found" };
         }
 
+        if(user.IsAdminLocked)
+        {
+            return new AuthenticationResult { IsSuccessful = false, ErrorMessage = "Blocked by admin" };
+        }
+
         if (!_userService.checkPassword(username, password))
         {
             return new AuthenticationResult { IsSuccessful = false, ErrorMessage = "Invalid password" };

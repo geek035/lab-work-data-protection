@@ -7,4 +7,5 @@ public interface IUserRepository {
     List<UserModel> LoadUsers();
     void UpdateUser(UserModel user);
     UserModel? LoadSpecificUser(byte[] username);
+    public void UpdateAllUsers(List<UserModel> updatedUsers);
 }

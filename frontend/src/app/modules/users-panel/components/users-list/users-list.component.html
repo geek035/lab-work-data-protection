@@ -1,0 +1,40 @@
+<app-loader-overlay [showLoader]="showLoader">
+    <form class="form" [formGroup]="form" (submit)="onSubmit()">
+
+        <label class="form__header">Список пользователей</label>
+
+        <div class="form-fields-box">
+            <form class="form-fields-group form-fields-group_checkboxes"
+                *ngFor="let user of users; index as i"
+                [formGroupName]="user.username">
+
+                <label class="form__label">{{user.username}}: </label>
+
+                <label class="form__label">блок. </label>
+                <input type="checkbox" class="form-fields-group__field
+                    form-fields-group__field_checkbox"
+                    formControlName="0"/>
+
+                <label class="form__label">огр. </label>
+                <input type="checkbox" class="form-fields-group__field
+                    form-fields-group__field_checkbox" 
+                    formControlName="1" />
+
+            </form>
+        </div>
+
+        <div class="form-message-box">
+            <p class="form-message-box__message 
+                form-message-box__message_error"
+                *ngIf="form.getError('error')">
+            
+            Ошибка обновления
+            </p>
+        </div>
+
+        <div class="form-buttons-group">
+            <app-button [buttonType]="'submit'">Ок</app-button>
+            <app-button [onClickHandler]="onClick.bind(this)">Отмена</app-button>
+        </div>
+    </form>
+</app-loader-overlay>

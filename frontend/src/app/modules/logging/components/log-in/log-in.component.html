@@ -34,6 +34,14 @@
 
                 Пароль введен неверно
             </div>
+
+            <div class="
+                form-message-box__message 
+                form-message-box__message_error"
+                *ngIf="logForm.controls['password'].errors?.['anotherError']">
+
+                Произошла ошибка
+            </div>
         </div>
         
         <div class="form-buttons-group">

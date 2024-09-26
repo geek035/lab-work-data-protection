@@ -5,6 +5,7 @@ import { UserDataRequestService } from '../server-services/user-data-request.ser
 import { UserDataToUpdate } from '../../../models/user-data-to-update.model';
 import { exhaustMap, Observable, of, throwError } from 'rxjs';
 import { UserData } from '../../../models/user-data.model';
+import { changePasswordRequest } from '../../../models/change-password-request';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,8 @@ export class UserUpdateDataService implements IUserUpdateDataService {
     private readonly userDataRequestService: UserDataRequestService
   ) {}
 
-  updateData(data: UserDataToUpdate, oldPassword: string | undefined): Observable<UserData | Error> {
-    if (data.password !== undefined && oldPassword !== undefined) {
+  changePassword(data: changePasswordRequest, oldPassword: string | undefined): Observable<UserData | Error> {
+    if (oldPassword !== undefined) {
       return this.userDataRequestService
         .checkPassword(data.username, oldPassword)
         .pipe(
@@ -25,17 +26,21 @@ export class UserUpdateDataService implements IUserUpdateDataService {
               return throwError(() => new Error('Неверный пароль'));
             }
 
-            return this.userDataRequestService.updateUserData(data);
+            return this.userDataRequestService.changePassword(data);
           })
         );
     }
 
-    if (data.password !== undefined) {
-      return throwError(() => Error('Необходимы старый пароль'));
-    }
-
-    return this.userDataRequestService.updateUserData(data);
+    return throwError(() => Error('Необходимы старый пароль'));
   }
+
+  updateAllUsers(data: UserData[]): Observable<string | Error> {
+    return this.userDataRequestService.updateAllUsers(data);
+  }
+
+  updateData(data: UserDataToUpdate): Observable<UserData | Error> {
+      return this.userDataRequestService.updateUserData(data)
+    }
 
   addUser(data: UserDataToUpdate): Observable<UserData | Error> {
     return this.userDataRequestService.addUserData(data.username);

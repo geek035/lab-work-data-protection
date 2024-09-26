@@ -23,7 +23,9 @@ export class AuthenticationGuard implements CanActivate {
         const token = sessionStorage.getItem('token') as string;
         const username = this.decoder.getName(token);
         
-        if (username == next.params['id']) { return true; }
+        if (username == next.params['id']) {
+          return true;
+        }
       }
     
       this.router.navigate(['login']);

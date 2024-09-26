@@ -15,4 +15,8 @@ export class UserPanelStateService {
   setState(data: IUserPanelState): void {
     this.$stateSubject.next(data);
   }
+
+  getLastValue(): IUserPanelState {
+    return this.$stateSubject.getValue();
+  }
 }

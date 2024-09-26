@@ -112,11 +112,24 @@ internal class FileUserRepository : IUserRepository
             }
         }
 
+        writeAllUsers(users);
+    }
+
+    public void UpdateAllUsers(List<UserModel> updatedUsers) {
+        writeAllUsers(updatedUsers);
+    }
+
+    public UserModel?  LoadSpecificUser(byte[] username) {
+        return LoadUsers().FirstOrDefault(u => u.Username.SequenceEqual(username));
+    }
+
+    private void writeAllUsers(List<UserModel> userModels) {
+
         // Перезаписываем файл со всеми обновленными пользователями
         using (FileStream fs = new FileStream(_filepath, FileMode.Create, FileAccess.Write))
         using (StreamWriter writer = new StreamWriter(fs, Encoding.UTF8))
         {
-            foreach (var user in users)
+            foreach (var user in userModels)
             {
                 string userData = $"{Encoding.UTF8.GetString(user.Username)},"
                             + $"{Encoding.UTF8.GetString(user.Password)},"
@@ -127,9 +140,5 @@ internal class FileUserRepository : IUserRepository
                 writer.WriteLine(userData);
             }
         }
-    }
-
-    public UserModel?  LoadSpecificUser(byte[] username) {
-        return LoadUsers().FirstOrDefault(u => u.Username.SequenceEqual(username));
     }
 }

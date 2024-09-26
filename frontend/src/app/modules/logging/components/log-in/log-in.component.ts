@@ -46,16 +46,16 @@ export class LogINComponent {
     const username = this.logForm.controls['username'].value;
     const password = this.logForm.controls['password'].value;
 
-    this.showSpinner = true;
+    this.showSpinner = false;
 
-    this.#subcription = this.authenticationService
+    this.authenticationService
       .authenticate(username, password)
       .subscribe({
         next: (responce) => {
           this.showSpinner = false;
           this.#wrongPasswordsCounter = 0;
           this.changeDetectorRef.markForCheck();
-          this.router.navigate([`user/${(responce as LoginResponse).user.username}/description`]);
+          this.router.navigate([`user/${(responce as LoginResponse).user.username}`]);
         },
         error: (error: HttpErrorResponse) => { 
           this.showSpinner = false;
@@ -65,6 +65,9 @@ export class LogINComponent {
           } else if (error.status == 401) {
             this.logForm.controls['password'].setErrors({ wrongPassword: true});
             this.#wrongPasswordsCounter++;
+          } else {
+            this.logForm.controls['password'].setErrors({ anotherError: true});
+            this.#wrongPasswordsCounter++;
           }
 
           if (this.#wrongPasswordsCounter == 3) {
@@ -72,7 +75,6 @@ export class LogINComponent {
           }
 
           this.changeDetectorRef.markForCheck();
-
         },
       });
 
